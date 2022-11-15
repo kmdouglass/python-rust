@@ -1,0 +1,92 @@
+[build-system]
+requires = ["maturin>=0.13,<0.14"]
+build-backend = "maturin"
+
+[tool.maturin]
+python-source = "python_src"
+
+[project]
+name = "python_lib"
+version = "0.1.0"
+description = "Python extensions in Rust"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+keywords = [ "rust", "extension" ]
+authors = [ 
+    { name = "Kyle M. Douglass",  email = "kyle.m.douglass@gmail.com>" }
+]
+classifiers = [
+  "Programming Language :: Python"
+]
+dependencies = [ ]
+
+[project.optional-dependencies]
+develop = [
+  "black",
+  "isort >= 5.0",
+  "maturin",
+  "mypy",
+  "pylint",
+  "tox"
+]
+test = [
+  "pytest",
+]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = [
+    "python_src/tests",
+]
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist =
+    black
+    isort
+    mypy
+    pylint
+    py3
+isolated_build = True
+
+[testenv]
+extras = test
+commands =
+    pytest
+
+[testenv:format]
+allowlist_externals =
+    black
+    isort
+skip_install = True
+commands =
+    black .
+    isort .
+
+[testenv:{black, isort, mypy, pylint}]
+allowlist_externals =
+    black
+    isort
+    mypy
+    pylint
+skip_install = True
+commands =
+    black: black --check --diff .
+    isort: isort --check --diff .
+    mypy: mypy .
+    pylint: pylint python_src/python_lib
+"""
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+exclude = [ "python_src/tests" ]
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pylint]
+extension-pkg-allow-list = [ "python_lib" ]
+max-line-length = 100

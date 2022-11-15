@@ -1,0 +1,48 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+        os: [ubuntu-latest, windows-latest]
+    
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      # Rust
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: clippy, rustfmt
+      - name: Run Rust linters
+        run: |
+          cargo clippy
+          cargo fmt -v --check
+      - name: Run Rust tests
+        run: cargo test --verbose
+
+      # Python
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+            pip install --upgrade pip
+            pip install -e .[develop]
+      - name: Run Python tests and linters
+        run: tox      
