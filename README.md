@@ -13,11 +13,15 @@ $ python -m venv .venv
 $ source .venv/bin/activate
 (.venv) $ pip install .
 (.venv) $ python
->>> from python_lib.main import what_is_the_meaning_of_life
->>> what_is_the_meaning_of_life()
-42
+>>> from python_lib import StateMachine, par_run
+>>> machines = [StateMachine for _ in range(100)]
+>>> _ = par_run(machines)
 
 ```
+
+## Project layout
+
+The [src/python](src/python) folder contains example Python objects written in Rust. These are exported into the Python extension module in [src/python_module.rs](src/python_module.rs).
 
 ## Development
 

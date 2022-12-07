@@ -1,4 +1,4 @@
-//! Iterate over a list of Python objects in parallel.
+//! Iterate over a list of Python objects in parallel without copying their data.
 //! 
 use std::ops::DerefMut;
 
